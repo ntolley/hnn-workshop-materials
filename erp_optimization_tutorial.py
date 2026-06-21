@@ -6,7 +6,7 @@ from matplotlib.lines import Line2D
 
 import hnn_core
 from hnn_core import (MPIBackend, jones_2009_model, simulate_dipole,
-                      read_dipole, JoblibBackend)
+                      read_dipole, JoblibBackend, pick_connection)
 from hnn_core.dipole import average_dipoles
 from hnn_core.viz import plot_dipole
 
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     # 1) Load ERP waveform from CSV file
     # ----------------------------------
     # 1st column must be time in ms, 2nd column must be neural signal (e.g. nAm or or mV)
-    dipole_experimental = read_dipole('/users/ntolley/Jones_Lab/hnn_jove/data/L_Contra.txt')
+    dipole_experimental = read_dipole('jove_data/pre-treatment.txt')
 
     # 2) Define optimization hyperparameters
     # --------------------------------------
@@ -189,14 +189,13 @@ if __name__ == "__main__":
 
     # 3) Evalute and save optimization results
     # -----------------------------------------
-    job_id = int(sys.argv[1])
-    fpath = "/users/ntolley/Jones_Lab/hnn_jove/data/baseline_optimization"
+    fpath = "jove_data"
 
     # Save parameters of best fit network
-    optim.net_.write_configuration(f'{fpath}/opt_baseline_config_correlation_{job_id}.json')
+    optim.net_.write_configuration(f'{fpath}/opt_baseline_config_correlation.json')
 
     # Save optimizer class
-    with open(f'{fpath}/opt_baseline_object_correlation_{job_id}.pkl', 'wb') as file:
+    with open(f'{fpath}/opt_baseline_object_correlation.pkl', 'wb') as file:
         pickle.dump(optim, file)
 
 
@@ -220,7 +219,7 @@ if __name__ == "__main__":
     plt.ylabel('Loss', fontsize=labelsize)
     plt.xticks(fontsize=ticksize)
     plt.xticks(fontsize=ticksize)
-    plt.savefig(f'/users/ntolley/Jones_Lab/hnn_jove/figures/baseline_optimization/opt_baseline_loss_{job_id}.png')
+    plt.savefig('opt_baseline_loss.png')
 
     # Dipole figure
     fig, ax = plt.subplots(sharex=True, figsize=(6,4))
@@ -235,4 +234,4 @@ if __name__ == "__main__":
     ax.legend(legend_handles, ['optimized', 'baseline'])
     plt.title(f'Best loss: {optim.obj_[-1]:.2f}')
 
-    plt.savefig(f'/users/ntolley/Jones_Lab/hnn_jove/figures/baseline_optimization/opt_baseline_dipole_{job_id}.png')
+    plt.savefig('opt_baseline_dipole.png')
